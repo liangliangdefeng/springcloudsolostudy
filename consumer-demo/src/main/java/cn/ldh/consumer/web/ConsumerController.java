@@ -1,5 +1,6 @@
 package cn.ldh.consumer.web;
 
+import cn.ldh.consumer.client.UserClient;
 import cn.ldh.consumer.pojo.User;
 import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -22,14 +23,29 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("consumer")
-@DefaultProperties(defaultFallback = "queryByIdFallback")
+//@DefaultProperties(defaultFallback = "queryByIdFallback")
+//@DefaultProperties(defaultFallback = "queryByIdFallbackUser")
 public class ConsumerController {
 
-    @Autowired
-    private RestTemplate restTemplate;
+//    @Autowired
+//    private RestTemplate restTemplate;
 
     @Autowired
-    private DiscoveryClient discoveryClient;
+    private UserClient userClient;
+
+//    @Autowired
+//    private DiscoveryClient discoveryClient;
+
+    @GetMapping("{id}")
+//    @HystrixCommand(fallbackMethod = "queryByIdFallback")
+//    @HystrixCommand(fallbackMethod = "queryByIdFallbackUser")
+//    @HystrixCommand
+    public User queryById(@PathVariable("id") Long id) {
+//        String url = "http://user-service/user/" + id;
+//        String user = restTemplate.getForObject(url, String.class);
+//        return user;
+        return userClient.queryById(id);
+    }
 
 //    @Autowired
 //    private RibbonLoadBalancerClient client;
@@ -53,17 +69,26 @@ public class ConsumerController {
 //        return user;
 //    }
 
-    @GetMapping("{id}")
+//    @GetMapping("{id}")
 //    @HystrixCommand(fallbackMethod = "queryByIdFallback")
 //    @HystrixCommand(commandProperties = {
 //            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")
 //    })
-    @HystrixCommand
-    public String queryById(@PathVariable("id") Long id) {
-        String url = "http://user-service/user/" + id;
-        String user = restTemplate.getForObject(url, String.class);
-        return user;
-    }
+//    @HystrixCommand(
+//            commandProperties = {
+//                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "4"),
+//                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),
+//                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50")
+//            }
+//    )
+//    public String queryById(@PathVariable("id") Long id) {
+//        if (id % 2 == 0) {
+//            throw new RuntimeException("");
+//        }
+//        String url = "http://user-service/user/" + id;
+//        String user = restTemplate.getForObject(url, String.class);
+//        return user;
+//    }
 
 
     public String queryByIdFallback(Long id) {
@@ -72,6 +97,12 @@ public class ConsumerController {
 
     public String queryByIdFallback() {
         return "不好意思，服务器太拥挤了！";
+    }
+
+    public User queryByIdFallbackUser() {
+        User user = new User();
+        user.setName("hystrix");
+        return user;
     }
 
 }

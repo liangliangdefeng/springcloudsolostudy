@@ -11,6 +11,12 @@ eureka:
   instance:
     prefer-ip-address: true
     ip-address: 127.0.0.1
+feign:
+  hystrix:
+    enabled: true
+ribbon:
+  ConnectionTimeOut: 500
+  ReadTimeOut: 2000
 user-service:
   ribbon:
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
@@ -20,7 +26,7 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 3000
+            timeoutInMilliseconds: 1000
 #    user-service:
 #      execution:
 #        isolation:
