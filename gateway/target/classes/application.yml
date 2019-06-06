@@ -44,4 +44,3 @@ ribbon:
   ConnectionTimeOut: 500
   ReadTimeout: 2000
   MaxAutoRetriesNextServer: 0 #不重试
-  #ribbon真实时长默认是(read+connect)*2，必须小于hystrix时长
